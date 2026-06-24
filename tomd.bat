@@ -91,7 +91,7 @@ Write-Host "Analizando $($allFiles.Count) archivos totales... ($totalFiles pasar
 $indexFile = Join-Path $destDir "_00_arbol_indice.md"
 $treeOutput = & tree.com $normalizedPath /F /A
 $treeContent = "# ÍNDICE DEL DIRECTORIO (Contexto Estructural)`r`n`r`n"
-$treeContent += "**Proyecto:** `$folderName`  `r`n"
+$treeContent += "**Proyecto:** $folderName  `r`n"
 $treeContent += "**Nota:** Este es el árbol original del proyecto. Más abajo se detallan los archivos excluidos.`r`n`r`n"
 $treeContent += "```text`r`n"
 $treeContent += ($treeOutput -join "`r`n")
