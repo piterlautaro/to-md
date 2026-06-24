@@ -36,6 +36,7 @@ tomd <carpeta_modulo> [opciones]
 ### Opciones y Flags:
 * `--only=ext1,ext2...` *(Opcional)*: Procesa **únicamente** las extensiones especificadas (separadas por comas).
 * `--exclude=ext1,ext2...` *(Opcional)*: Ignora y salta por completo las extensiones indicadas.
+* `--tree` *(Opcional)*: Genera **solamente** el archivo de árbol de directorio (`_00_arbol_indice.md`) sin procesar ni convertir ningún archivo fuente. Útil para obtener una vista rápida de la estructura del proyecto.
 
 ---
 
@@ -65,6 +66,13 @@ Si ejecutas el comando desde la raíz del proyecto apuntando a un submódulo pro
 ```bash
 tomd src/components/billing --only=ts --exclude=spec.ts
 ```
+
+### 5. Generar solo el árbol de directorio (`--tree`)
+Cuando solo necesitas visualizar la estructura del proyecto sin convertir archivos:
+```bash
+tomd src/modules/auth --tree
+```
+*Genera únicamente `_00_arbol_indice.md` dentro de `auth_md/` con el árbol completo de carpetas y archivos.*
 
 ---
 

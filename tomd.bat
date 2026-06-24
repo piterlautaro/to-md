@@ -15,12 +15,15 @@ exit /b %errorlevel%
 $sourceDir = ""
 $onlyExts = @()
 $excludeExts = @()
+$treeOnly = $false
 
 foreach ($arg in $args) {
     if ($arg -match "^--only=(.+)") {
         $onlyExts = $matches[1] -split "," | ForEach-Object { $_.Trim().ToLower() -replace '^\.', '' }
     } elseif ($arg -match "^--exclude=(.+)") {
         $excludeExts = $matches[1] -split "," | ForEach-Object { $_.Trim().ToLower() -replace '^\.', '' }
+    } elseif ($arg -eq "--tree") {
+        $treeOnly = $true
     } elseif ($sourceDir -eq "") {
         $sourceDir = $arg
     }
@@ -99,6 +102,17 @@ if ($omittedFiles.Count -gt 0) {
     }
 }
 [System.IO.File]::WriteAllText($indexFile, $treeContent, $utf8Encoding)
+
+if ($treeOnly) {
+    Write-Host ""
+    Write-Host "=================================================" -ForegroundColor Cyan
+    Write-Host " MODO --tree: Solo se genero el arbol de directorio" -ForegroundColor Cyan
+    Write-Host "=================================================" -ForegroundColor Cyan
+    Write-Host " Origen  : $folderName"
+    Write-Host " Destino : ${folderName}_md/_00_arbol_indice.md"
+    Write-Host "=================================================" -ForegroundColor Cyan
+    exit
+}
 
 # 6. Estrategia de Agrupaci�n (L�mite NotebookLM = 300 fuentes)
 $maxStandalone = 250
