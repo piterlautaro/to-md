@@ -1,6 +1,7 @@
 <# :
 @echo off
 setlocal
+chcp 65001 >nul
 :: Validar que se reciba al menos la carpeta
 if "%~1"=="" (
     echo Error: Debes especificar el nombre de la carpeta.
@@ -10,6 +11,9 @@ if "%~1"=="" (
 powershell -NoProfile -ExecutionPolicy Bypass -Command "& ([ScriptBlock]::Create((Get-Content '%~f0' -Raw)))" %*
 exit /b %errorlevel%
 #>
+
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 # 1. Parseo de Argumentos
 $sourceDir = ""
@@ -44,7 +48,7 @@ if (-not (Test-Path $destDir)) {
     New-Item -ItemType Directory -Force -Path $destDir | Out-Null
 }
 
-# 3. Configuraci�n de Codificaci�n (Win1252 -> UTF8)
+# 3. Configuración de Codificación (Win1252 -> UTF8)
 try {
     $win1252Encoding = [System.Text.Encoding]::GetEncoding(1252)
 } catch {
@@ -83,12 +87,12 @@ $errorCount = 0
 
 Write-Host "Analizando $($allFiles.Count) archivos totales... ($totalFiles pasaron los filtros)" -ForegroundColor Cyan
 
-# 5. Crear �ndice del �rbol (En formato Markdown)
+# 5. Crear Índice del Árbol (En formato Markdown)
 $indexFile = Join-Path $destDir "_00_arbol_indice.md"
 $treeOutput = & tree.com $normalizedPath /F /A
-$treeContent = "# �NDICE DEL DIRECTORIO (Contexto Estructural)`r`n`r`n"
+$treeContent = "# ÍNDICE DEL DIRECTORIO (Contexto Estructural)`r`n`r`n"
 $treeContent += "**Proyecto:** `$folderName`  `r`n"
-$treeContent += "**Nota:** Este es el �rbol original del proyecto. M�s abajo se detallan los archivos excluidos.`r`n`r`n"
+$treeContent += "**Nota:** Este es el árbol original del proyecto. Más abajo se detallan los archivos excluidos.`r`n`r`n"
 $treeContent += "```text`r`n"
 $treeContent += ($treeOutput -join "`r`n")
 $treeContent += "`r`n````r`n"
@@ -114,7 +118,7 @@ if ($treeOnly) {
     exit
 }
 
-# 6. Estrategia de Agrupaci�n (L�mite NotebookLM = 300 fuentes)
+# 6. Estrategia de Agrupación (Límite NotebookLM = 300 fuentes)
 $maxStandalone = 250
 $chunkSize = 40
 $standaloneFiles = @()
@@ -194,10 +198,10 @@ if ($groupedFiles.Count -gt 0) {
 
 $totalGeneratedFiles = 1 + $standaloneFiles.Count + $groupCount
 
-# --- FEEDBACK Y ESTAD�STICAS FINALES ---
+# --- FEEDBACK Y ESTADÍSTICAS FINALES ---
 Write-Host ""
 Write-Host "=================================================" -ForegroundColor Cyan
-Write-Host " REPORTE DE CONVERSI�N (MODO MARKDOWN LLM)"       -ForegroundColor Cyan
+Write-Host " REPORTE DE CONVERSIÓN (MODO MARKDOWN LLM)"       -ForegroundColor Cyan
 Write-Host "=================================================" -ForegroundColor Cyan
 Write-Host " Origen  : $folderName"
 Write-Host " Destino : ${folderName}_md (Contiene archivos .md)"
@@ -205,13 +209,13 @@ Write-Host "-------------------------------------------------"
 Write-Host " Archivos en la carpeta   : $($allFiles.Count)"
 Write-Host " Excluidos por filtros    : $($omittedFiles.Count)" -ForegroundColor DarkYellow
 Write-Host " Archivos a procesar      : $totalFiles"
-Write-Host " Transformados con �xito  : $successCount" -ForegroundColor Green
+Write-Host " Transformados con éxito  : $successCount" -ForegroundColor Green
 if ($errorCount -gt 0) {
     Write-Host " Fallos lectura (Binarios): $errorCount" -ForegroundColor Red
 }
 Write-Host "-------------------------------------------------"
-Write-Host " RESUMEN DE SALIDA (M�ximo permitido: 300)"
-Write-Host " - �ndice de �rbol y log  : 1"
+Write-Host " RESUMEN DE SALIDA (Máximo permitido: 300)"
+Write-Host " - Índice de árbol y log  : 1"
 Write-Host " - Archivos individuales  : $($standaloneFiles.Count)"
 Write-Host " - Archivos combinados    : $groupCount"
 if ($totalGeneratedFiles -le 300) {
